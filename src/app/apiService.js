@@ -7,7 +7,8 @@ const apiService = axios.create({
     Accept:"application/json"
   },
   params:{
-    api_key: API_KEY
+    api_key: API_KEY,
+    
   }
 });
 
