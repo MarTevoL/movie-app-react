@@ -5,24 +5,23 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { CardActionArea, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import IMG_URL from "../app/config"
 
 const url = "https://image.tmdb.org/t/p/w500";
 
-function ProductCard({ product }) {
+function MovieCard({ product: movie }) {
   const navigate = useNavigate();
   return (
-    <Card onClick={() => navigate(`/product/${product.id}`)}>
+    <Card onClick={() => navigate(`/movie/${movie.id}`)}>
       <CardActionArea>
         <CardMedia
           component="img"
           
-          image={`${url}${product.poster_path}`}
+          image={`${url}${movie.poster_path}`}
           alt="green iguana"
         />
         <CardContent>
           <Typography gutterBottom variant="Button text" component="h3" noWrap>
-            {product.original_title}
+            {movie.original_title}
           </Typography>
           <Stack
             direction="row"
@@ -31,7 +30,7 @@ function ProductCard({ product }) {
             justifyContent="flex-end"
           >
             <Typography variant="subtitle1">
-              {product.vote_average}
+              {movie.vote_average}
             </Typography>
           </Stack>
         </CardContent>
@@ -40,4 +39,4 @@ function ProductCard({ product }) {
   );
 }
 
-export default ProductCard;
+export default MovieCard;

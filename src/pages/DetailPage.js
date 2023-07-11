@@ -12,7 +12,6 @@ import {
   Link,
 } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
-import { fCurrency } from "../utils";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import apiService from "../app/apiService";
@@ -32,8 +31,7 @@ function DetailPage() {
       const getProduct = async () => {
         setLoading(true);
         try {
-          const res = await apiService.get(`/${params.id}`);
-          console.log(res);
+          const res = await apiService.get(`/movie/${params.id}`);
           setProduct(res.data);
           setError("");
         } catch (error) {

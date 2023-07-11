@@ -6,10 +6,8 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 
 import Logo from "../components/Logo";
-import useAuth from "../hooks/useAuth";
 
 function MainHeader() {
-  const { user } = useAuth();
 
   return (
     <Box>
@@ -27,9 +25,7 @@ function MainHeader() {
             TMDB
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Typography variant="h6" color="inherit" component="div">
-            Welcome {user?.username}!
-          </Typography>
+          
         </Toolbar>
       </AppBar>
     </Box>

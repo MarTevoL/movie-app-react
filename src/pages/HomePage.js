@@ -1,50 +1,50 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, createContext, useRef } from "react";
 import { Alert, Box, Container, Stack } from "@mui/material";
-import ProductFilter from "../components/ProductFilter";
-import ProductSearch from "../components/ProductSearch";
-import ProductSort from "../components/ProductSort";
-import ProductList from "../components/ProductList";
+import MovieFilter from "../components/MovieFilter";
+import MovieSearch from "../components/MovieSearch";
+import MovieList from "../components/MovieList";
 import { FormProvider } from "../components/form";
 import { useForm } from "react-hook-form";
 import apiService from "../app/apiService";
-import orderBy from "lodash/orderBy";
 import Pagination from '@mui/material/Pagination';
 import LoadingScreen from "../components/LoadingScreen";
+import { useNavigate } from "react-router-dom";
 
-// export const PageContext = createContext();
 
 function HomePage() {
 
-
-  const [products, setProducts] = useState([]);
-  const [pageNum, setPageNum] = useState(1)
+  const [movies, setMovies] = useState([]);
+  const [pageNum, setPageNum] = useState(1);
+  const [genreNum, setGenreNum] = useState(null)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const defaultValues = {
-    gender: [],
-    category: "All",
-    priceRange: "",
-    sortBy: "featured",
-    searchQuery: ""
+    
+    genres: "All",
+    
   };
   const methods = useForm({
     defaultValues,
   });
+
+  const pageCount = 500; // "page must be less than or equal to 500"
+
   const { watch, reset } = methods;
-  // const filters = watch();
+  const filters = watch();
   // const filterProducts = applyFilter(products, filters);
 
   useEffect(() => {
-    const getProducts = async () => {
+    const getMovies = async () => {
       setLoading(true);
       try {
-        const res = await apiService.get(`/popular`,{
+        const res = await apiService.get(`/movie/popular`,{
           params : {
-            page: pageNum
+            page: pageNum,
+            
           }
         });
-        setProducts(res.data.results);
+        setMovies(res.data.results);
         setError("");
       } catch (error) {
         console.log(error);
@@ -52,14 +52,35 @@ function HomePage() {
       }
       setLoading(false);
     };
-    getProducts();
+    getMovies();
   }, [pageNum]);
+
+  useEffect(() => {
+    const getMoviesWithGenre = async () => {
+      setLoading(true);
+      try {
+        const res = await apiService.get(`/discover/movie`,{
+          params : {
+            with_genres: genreNum,
+            
+          }
+        });
+        setMovies(res.data.results);
+        setError("");
+      } catch (error) {
+        console.log(error);
+        setError(error.message);
+      }
+      setLoading(false);
+    };
+    getMoviesWithGenre();
+  }, [genreNum]);
 
   return (
     <Container sx={{ display: "flex", minHeight: "100vh", mt: 3 }}>
       <Stack>
         <FormProvider methods={methods}>
-          {/* <ProductFilter resetFilter={reset} /> */}
+          <MovieFilter resetFilter={reset} />
         </FormProvider>
       </Stack>
       <Stack sx={{ flexGrow: 1 }}>
@@ -71,16 +92,17 @@ function HomePage() {
             justifyContent="space-between"
             mb={2}
           >
-            <ProductSearch />
+            <MovieSearch />
            
           </Stack>
         </FormProvider>
          <Box sx={{display:"flex",justifyContent:"center"}}>
-                {/* <PageContext.Provider value={setPageNum}> */}
-                <Pagination page={pageNum} onChange={(e,page) => setPageNum(page)} count={10} shape="rounded" />
-          {/* </PageContext.Provider> */}
+                <Pagination page={pageNum} onChange={(e,page) => {
+                  setPageNum(page);
+                  }} count={pageCount} shape="rounded" color="primary" variant="outlined"/>
         </Box>
-        <Box sx={{ position: "relative", height: 1 }}>
+        <Box sx={{ position: "relative", height: 1 , marginTop: "10px", marginBottom: "20px"}}>
+
           {loading ? (
             <LoadingScreen />
           ) : (
@@ -88,68 +110,22 @@ function HomePage() {
               {error ? (
                 <Alert severity="error">{error}</Alert>
               ) : (
-                <ProductList products={products} />
+                <MovieList products={movies} />
               )}
             </>
           )}
 
         </Box>
         <Box sx={{display:"flex",justifyContent:"center"}}>
-                {/* <PageContext.Provider value={setPageNum}> */}
-                <Pagination page={pageNum} onChange={(e,page) => setPageNum(page)} count={10} shape="rounded" />
-          {/* </PageContext.Provider> */}
+                <Pagination page={pageNum} onChange={(e,page) => setPageNum(page)} count={pageCount} shape="rounded" color="primary" variant="outlined"/>
         </Box>
       </Stack>
     </Container>
   );
 }
 
-// function applyFilter(products, filters) {
-//   const { sortBy } = filters;
-//   let filteredProducts = products;
 
-//   // SORT BY
-//   if (sortBy === "featured") {
-//     filteredProducts = orderBy(products, ["sold"], ["desc"]);
-//   }
-//   if (sortBy === "newest") {
-//     filteredProducts = orderBy(products, ["createdAt"], ["desc"]);
-//   }
-//   if (sortBy === "priceDesc") {
-//     filteredProducts = orderBy(products, ["price"], ["desc"]);
-//   }
-//   if (sortBy === "priceAsc") {
-//     filteredProducts = orderBy(products, ["price"], ["asc"]);
-//   }
 
-//   // FILTER PRODUCTS
-//   if (filters.gender.length > 0) {
-//     filteredProducts = products.filter((product) =>
-//       filters.gender.includes(product.gender)
-//     );
-//   }
-//   if (filters.category !== "All") {
-//     filteredProducts = products.filter(
-//       (product) => product.category === filters.category
-//     );
-//   }
-//   if (filters.priceRange) {
-//     filteredProducts = products.filter((product) => {
-//       if (filters.priceRange === "below") {
-//         return product.price < 25;
-//       }
-//       if (filters.priceRange === "between") {
-//         return product.price >= 25 && product.price <= 75;
-//       }
-//       return product.price > 75;
-//     });
-//   }
-//   if (filters.searchQuery) {
-//     filteredProducts = products.filter((product) =>
-//       product.name.toLowerCase().includes(filters.searchQuery.toLowerCase())
-//     );
-//   }
-//   return filteredProducts;
-// }
+
 
 export default HomePage;

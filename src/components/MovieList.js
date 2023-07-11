@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import { Grid,Box } from "@mui/material";
-import ProductCard from "./ProductCard";
+import MovieCard from "./MovieCard";
 
-function ProductList({ products, loading }) {
+function MovieList({ products, loading }) {
   return (
     <Box>
 
     <Grid container spacing={2} mt={1}>
       {products.map((product, index) => (
         <Grid key={product.id} item xs={6} md={4} lg={3}>
-          <ProductCard product={product} />
+          <MovieCard product={product} />
         </Grid>
       ))}
     </Grid>
@@ -18,4 +18,4 @@ function ProductList({ products, loading }) {
   );
 }
 
-export default ProductList;
+export default MovieList;

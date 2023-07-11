@@ -1,6 +1,9 @@
+import { useEffect, useState } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { FMultiCheckbox, FRadioGroup } from "./form";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
+import apiService from "../app/apiService";
+import LoadingScreen from "./LoadingScreen";
 
 export const SORT_BY_OPTIONS = [
   { value: "featured", label: "Featured" },
@@ -24,10 +27,29 @@ export const FILTER_PRICE_OPTIONS = [
   { value: "above", label: "Above $75" },
 ];
 
-function ProductFilter({ resetFilter }) {
+function MovieFilter({ resetFilter }) {
+const [genres, setGenres] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getGenres = async () => {
+      setLoading(true);
+      try {
+        const res = await apiService.get(`/genre/movie/list`);
+        setGenres(res.data.genres);
+      } catch (error) {
+        console.log(error);
+      }
+      setLoading(false);
+    };
+    getGenres();
+  }, []);
+  
+  console.log(genres);
+
   return (
     <Stack spacing={3} sx={{ p: 3, width: 250 }}>
-      <Stack spacing={1}>
+      {/* <Stack spacing={1}>
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
           Gender
         </Typography>
@@ -36,20 +58,26 @@ function ProductFilter({ resetFilter }) {
           options={FILTER_GENDER_OPTIONS}
           sx={{ width: 1 }}
         />
-      </Stack>
+      </Stack> */}
+        {loading ? (
+          <LoadingScreen/> 
+        ) : (
+           <Stack spacing={1}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Genres
+          </Typography>
+          <FRadioGroup
+            name="genres"
+            options={genres.map((genre) => genre.name)}
+            
+            row={false}
+            />
+        </Stack>
+        )}
+        
+      
 
-      <Stack spacing={1}>
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          Category
-        </Typography>
-        <FRadioGroup
-          name="category"
-          options={FILTER_CATEGORY_OPTIONS}
-          row={false}
-        />
-      </Stack>
-
-      <Stack spacing={1}>
+      {/* <Stack spacing={1}>
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
           Price
         </Typography>
@@ -58,7 +86,7 @@ function ProductFilter({ resetFilter }) {
           options={FILTER_PRICE_OPTIONS.map((item) => item.value)}
           getOptionLabel={FILTER_PRICE_OPTIONS.map((item) => item.label)}
         />
-      </Stack>
+      </Stack> */}
 
       <Box>
         <Button
@@ -66,7 +94,7 @@ function ProductFilter({ resetFilter }) {
           type="submit"
           color="inherit"
           variant="outlined"
-          onClick={resetFilter}
+          onClick={() => resetFilter()}
           startIcon={<ClearAllIcon />}
         >
           Clear All
@@ -76,4 +104,4 @@ function ProductFilter({ resetFilter }) {
   );
 }
 
-export default ProductFilter;
+export default MovieFilter;
