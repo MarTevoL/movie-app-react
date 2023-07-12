@@ -22,7 +22,7 @@ export const genreNumber = (genreName) => {
       ];
     
       for (var i = 0; i < genres.length; i++) {
-        if (genres[i].name === genreName) {
+        if (genres[i].name.toString().toLowerCase() === genreName.toString().toLowerCase()) {
           return genres[i].id;
         }
       }

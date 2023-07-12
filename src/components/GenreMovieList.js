@@ -40,6 +40,7 @@ function GenreMovieList() {
       setLoading(false);
     };
     getMoviesWithGenre();
+    console.log(filter);
   }, [genreNum,pageNum]);
 
   useEffect(() => {

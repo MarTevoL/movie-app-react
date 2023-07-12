@@ -46,12 +46,13 @@ const [loading, setLoading] = useState(true);
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Genres
           </Typography>
-          <FRadioGroup
+          <FMultiCheckbox name="genres" options={genres.map((genre) => genre.name)}/>
+          {/* <FRadioGroup
             name="genres"
             options={genres.map((genre) => genre.name)}
             
             row={false}
-            />
+            /> */}
         </Stack>
         )}
         
