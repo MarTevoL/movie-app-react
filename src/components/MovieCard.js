@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 const url = "https://image.tmdb.org/t/p/w500";
 
-function MovieCard({ product: movie }) {
+function MovieCard({ movie }) {
   const navigate = useNavigate();
   return (
     <Card onClick={() => navigate(`/movie/${movie.id}`)}>

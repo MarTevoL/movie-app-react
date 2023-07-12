@@ -1,25 +1,34 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Grid,Box, Alert } from "@mui/material";
+import { useForm, useWatch } from "react-hook-form";
 import MovieCard from "./MovieCard";
 import apiService from '../app/apiService';
 import LoadingScreen from "../components/LoadingScreen";
 import Pagination from '@mui/material/Pagination';
+import { genreNumber } from "../ultils";
 
-function MovieList() {
+function GenreMovieList() {
 
   const [movies, setMovies] = useState([]);
   const [pageNum, setPageNum] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [genreNum, setGenreNum] = useState()
   const [error, setError] = useState("");
-  const pageCount = 500; // "page must be less than or equal to 500"
+  const pageCount = 500; // "page must be less than or equal to 500"const methods = useForm();
+
+  const methods = useForm();
+  const { watch } = methods;
+  const filter = watch("genres");
 
   useEffect(() => {
-    const getMovies = async () => {
+    const getMoviesWithGenre = async () => {
       setLoading(true);
       try {
-        const res = await apiService.get(`/movie/popular`,{
+        const res = await apiService.get(`/discover/movie`,{
           params : {
+            with_genres: genreNum,
             page: pageNum,
+            
           }
         });
         setMovies(res.data.results);
@@ -30,8 +39,12 @@ function MovieList() {
       }
       setLoading(false);
     };
-    getMovies();
-  }, [pageNum]);
+    getMoviesWithGenre();
+  }, [genreNum,pageNum]);
+
+  useEffect(() => {
+    setGenreNum(genreNumber(filter))
+  },[filter])
 
 
   const PaginationBox = () => {
@@ -76,4 +89,4 @@ function MovieList() {
   );
 }
 
-export default MovieList;
+export default GenreMovieList;
