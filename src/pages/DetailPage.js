@@ -16,23 +16,27 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import apiService from "../app/apiService";
 import LoadingScreen from "../components/LoadingScreen";
+import CreditList from "../components/CreditList";
+import MovieImageList from "../components/MovieImageList";
 import { Alert } from "@mui/material";
 
 const url = "https://image.tmdb.org/t/p/w500";
 
 function DetailPage() {
-  const [product, setProduct] = useState(null);
+  const [movie, setMovie] = useState(null);
+  const [credits, setCredits] = useState(null);
+  const [images, setImages] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const params = useParams();
 
   useEffect(() => {
     if (params.id) {
-      const getProduct = async () => {
+      const getMovie = async () => {
         setLoading(true);
         try {
           const res = await apiService.get(`/movie/${params.id}`);
-          setProduct(res.data);
+          setMovie(res.data);
           setError("");
         } catch (error) {
           console.log(error);
@@ -40,9 +44,50 @@ function DetailPage() {
         }
         setLoading(false);
       };
-      getProduct();
+      getMovie();
     }
   }, [params]);
+
+  useEffect(() => {
+    if (params.id) {
+      const getCredits = async () => {
+        setLoading(true);
+        try {
+          const res = await apiService.get(`/movie/${params.id}/credits`);
+          console.log("res", res);
+          setCredits(res.data.cast);
+          setError("");
+        } catch (error) {
+          console.log(error);
+          setError(error.message);
+        }
+        setLoading(false);
+      };
+      getCredits();
+    }
+  }, [params]);
+
+
+  useEffect(() => {
+    if (params.id) {
+      const getImages = async () => {
+        setLoading(true);
+        try {
+          const res = await apiService.get(`/movie/${params.id}/images`);
+          setImages(res.data.backdrops);
+          console.log("images", images);
+          setError("");
+        } catch (error) {
+          console.log(error);
+          setError(error.message);
+        }
+        setLoading(false);
+      };
+      getImages();
+    }
+  }, [params]);
+
+console.log("credit", credits);
 
   return (
     <Container sx={{ my: 3 }}>
@@ -50,7 +95,7 @@ function DetailPage() {
         <Link underline="hover" color="inherit" component={RouterLink} to="/">
           Movies
         </Link>
-        <Typography color="text.primary">{product?.original_title}</Typography>
+        <Typography color="text.primary">{movie?.original_title}</Typography>
       </Breadcrumbs>
       <Box sx={{ position: "relative", height: 1 }}>
         {loading ? (
@@ -61,7 +106,7 @@ function DetailPage() {
               <Alert severity="error">{error}</Alert>
             ) : (
               <>
-                {product && (
+                {movie && (
                   <Card>
                     <Grid container>
                       <Grid item xs={12} md={6}>
@@ -79,7 +124,7 @@ function DetailPage() {
                                 width: 1,
                                 height: 1,
                               }}
-                              src={`${url}${product.backdrop_path}`}
+                              src={`${url}${movie.backdrop_path}`}
                               alt="product"
                             />
                           </Box>
@@ -97,10 +142,10 @@ function DetailPage() {
                                "info.main",
                           }}
                         >
-                          {product.title}
+                          {movie.title}
                         </Typography>
                         <Typography variant="h6" paragraph>
-                          {product.tagline}
+                          {movie.tagline}
                         </Typography>
                         <Stack
                           direction="row"
@@ -109,7 +154,7 @@ function DetailPage() {
                           sx={{ mb: 2 }}
                         >
                           <Rating
-                            value={product.vote_average/2}
+                            value={movie.vote_average/2}
                             precision={0.5}
                             readOnly
                           />
@@ -117,7 +162,7 @@ function DetailPage() {
                             variant="body2"
                             sx={{ color: "text.secondary" }}
                           >
-                            ({product.vote_count} reviews)
+                            ({movie.vote_count} reviews)
                           </Typography>
                         </Stack>
                         
@@ -126,20 +171,58 @@ function DetailPage() {
                         <Box>
                           <ReactMarkdown
                             rehypePlugins={[rehypeRaw]}
-                            children={product.overview}
+                            children={movie.overview}
                           />
                         </Box>
                       </Grid>
                     </Grid>
                   </Card>
                 )}
-                {!product && (
+                {!movie && (
                   <Typography variant="h6">404 Product not found</Typography>
                 )}
               </>
             )}
           </>
         )}
+      </Box>
+      <Box sx={{ position: "relative", height: 1 , marginTop: "10px", marginBottom: "20px"}}>
+
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            <>
+              {error ? (
+                <Alert severity="error">{error}</Alert>
+              ) : (
+                <>
+                {credits && (
+                  <CreditList credits={credits} />)
+                }
+                </>
+              )}
+            </>
+          )}
+
+      </Box>
+      <Box sx={{ position: "relative", height: 1 , marginTop: "10px", marginBottom: "20px"}}>
+
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            <>
+              {error ? (
+                <Alert severity="error">{error}</Alert>
+              ) : (
+                <>
+                {images && (
+                  <MovieImageList itemData={images} />)
+                }
+                </>
+              )}
+            </>
+          )}
+
       </Box>
     </Container>
   );

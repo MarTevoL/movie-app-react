@@ -1,6 +1,7 @@
 import React, { useState, useEffect,  } from "react";
 import { Alert, Box, Container, Stack } from "@mui/material";
 import MovieFilter from "../components/MovieFilter";
+import AllMovieFilter from "../components/AllMovieFilter";
 import MovieSearch from "../components/MovieSearch";
 import MovieList from "../components/MovieList";
 import { FormProvider } from "../components/form";
@@ -28,7 +29,6 @@ function HomePage() {
   const methods = useForm({
     defaultValues,
   });
-  const pageCount = 500; // "page must be less than or equal to 500"
   const { watch, } = methods;
   const genreFilter = watch("genres");
   const searchQuery = watch("searchQuery");
@@ -127,9 +127,13 @@ function HomePage() {
       
       setPageNumP(1);
     }
-  },[genreFilter,genreNum])
+  },[genreFilter,genreNum]);
 
- 
+
+  
+
+
+
 
  const PaginationBox = () => {
     return (
@@ -150,6 +154,8 @@ function HomePage() {
   return (
     <Container sx={{ display: "flex", minHeight: "100vh", mt: 3 }}>
       <Stack>
+      
+      
         <FormProvider methods={methods}>
           <MovieFilter />
         </FormProvider>
