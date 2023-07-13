@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout";
 import DetailPage from "../pages/DetailPage";
 import HomePage from "../pages/HomePage";
 import NotFoundPage from "../pages/NotFoundPage";
+import QueryPage from "../pages/QueryPage";
 
 function Router() {
   return (
@@ -17,6 +18,7 @@ function Router() {
       >
         <Route index element={<HomePage />} />
         <Route path="movie/:id" element={<DetailPage />} />
+        <Route path="search/:query" element={<QueryPage />}/>
       </Route>
 
       <Route element={<BlankLayout />}>

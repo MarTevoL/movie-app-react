@@ -1,5 +1,5 @@
 import React, { useState, useEffect,  } from "react";
-import { Alert, Box, Container, Stack } from "@mui/material";
+import { Alert, Box, Button, Container, Stack,Paper } from "@mui/material";
 import MovieFilter from "../components/MovieFilter";
 import MovieSearch from "../components/MovieSearch";
 import MovieList from "../components/MovieList";
@@ -9,6 +9,7 @@ import apiService from "../app/apiService";
 import Pagination from '@mui/material/Pagination';
 import LoadingScreen from "../components/LoadingScreen";
 import { genreNumber } from "../ultils";
+import { useNavigate } from "react-router-dom";
 
 
 function HomePage() {
@@ -28,46 +29,22 @@ function HomePage() {
   const methods = useForm({
     defaultValues,
   });
-  const { watch, } = methods;
+  const { watch } = methods;
   const genreFilter = watch("genres");
   const searchQuery = watch("searchQuery");
   
   const isDisplayGenreMovie = !!genreFilter.length;
   const isDisplayQueryMovie = !(searchQuery.trim().length === 0);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!isDisplayQueryMovie) {
-      return
-    }
-    const getMovies = async () => {
-      setLoading(true);
-      try {
-        const res = await apiService.get("/search/movie",{
-          params : {
-            query: searchQuery,
-            page: pageNumQ
-            
-          }
-        });
-        setMovies(res.data.results);
-        setTotalPage(res.data.total_pages);
-        
-        
-        setError("");
-      } catch (error) {
-        setError(error.message);
-      }
-      setLoading(false);
-    };
-    getMovies();
-  }, [searchQuery,pageNumQ,isDisplayQueryMovie]);
+  
 
   useEffect(()=>{
     setPageNumQ(1);
   },[searchQuery]);
 
   useEffect(() => {
-    if (isDisplayGenreMovie || isDisplayQueryMovie) {
+    if (isDisplayGenreMovie ) {
       return
     }
     const getMovies = async () => {
@@ -87,10 +64,10 @@ function HomePage() {
       setLoading(false);
     };
     getMovies();
-  }, [pageNumP,isDisplayGenreMovie,isDisplayQueryMovie]);
+  }, [pageNumP,isDisplayGenreMovie]);
 
   useEffect(() => {
-    if (!isDisplayGenreMovie || isDisplayQueryMovie) {
+    if (!isDisplayGenreMovie ) {
      return 
     }
     const getMoviesWithGenre = async () => {
@@ -111,7 +88,7 @@ function HomePage() {
       setLoading(false);
     };
     getMoviesWithGenre();
-  }, [genreNum,pageNumGenMovie,isDisplayGenreMovie,isDisplayQueryMovie]);
+  }, [genreNum,pageNumGenMovie,isDisplayGenreMovie]);
 
   useEffect(() => {
     setGenreNum(genreNumber(genreFilter));
@@ -124,7 +101,10 @@ function HomePage() {
   },[genreFilter,genreNum,isDisplayGenreMovie]);
 
 
-  
+  function handleSubmitQuery() {
+    console.log("query",searchQuery);
+    navigate(`/search/${searchQuery}`);
+  }
 
 
 
@@ -132,15 +112,7 @@ function HomePage() {
  const PaginationBox = () => {
     return (
       <Box sx={{display:"flex",justifyContent:"center"}}>
-      <Pagination page={isDisplayQueryMovie ? pageNumQ : isDisplayGenreMovie ? pageNumGenMovie : pageNumP
-        
-      
-      } onChange={(e,page) => {
-        if (isDisplayQueryMovie) {
-          setPageNumQ(page);
-        } else {
-        isDisplayGenreMovie ? setPageNumGenMovie(page) : setPageNumP(page)};
-        }} count={ isDisplayQueryMovie ? totalPage : 500} shape="rounded" color="primary" variant="outlined"/>
+      <Pagination page={isDisplayGenreMovie ? pageNumGenMovie : pageNumP} onChange={(e,page) =>{isDisplayGenreMovie ? setPageNumGenMovie(page) : setPageNumP(page)}} count={ isDisplayQueryMovie ? totalPage : 500} shape="rounded" color="primary" variant="outlined"/>
 </Box>
     );
   }
@@ -148,7 +120,6 @@ function HomePage() {
   return (
     <Container sx={{ display: "flex", minHeight: "100vh", mt: 3 }}>
       <Stack>
-      
       
         <FormProvider methods={methods}>
           <MovieFilter />
@@ -158,14 +129,16 @@ function HomePage() {
       <Stack sx={{ flexGrow: 1 }}>
         <FormProvider methods={methods}>
           <Stack
-            spacing={2}
+            spacing={1}
             direction={{ xs: "column", sm: "row" }}
             alignItems={{ sm: "center" }}
-            justifyContent="space-between"
+            justifyContent="space-around"
             mb={2}
-          >
+          ><Paper>
+
             <MovieSearch />
-           
+           <Button variant="text" onClick={()=>handleSubmitQuery()}>Search</Button>
+          </Paper>
           </Stack>
         </FormProvider>
          <PaginationBox/>
