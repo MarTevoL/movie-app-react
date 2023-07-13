@@ -34,7 +34,6 @@ const [loading, setLoading] = useState(true);
     getGenres();
   }, []);
   
-  console.log(genres);
 
   return (
     <Stack spacing={3} sx={{ p: 3, width: 250 }}>
@@ -46,13 +45,13 @@ const [loading, setLoading] = useState(true);
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Genres
           </Typography>
-          <FMultiCheckbox name="genres" options={genres.map((genre) => genre.name)}/>
-          {/* <FRadioGroup
+          {/* <FMultiCheckbox name="genres" options={genres.map((genre) => genre.name)}/> */}
+          <FRadioGroup
             name="genres"
             options={genres.map((genre) => genre.name)}
             
             row={false}
-            /> */}
+            />
         </Stack>
         )}
         

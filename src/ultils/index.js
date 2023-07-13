@@ -20,6 +20,8 @@ export const genreNumber = (genreName) => {
         { "id": 10752, "name": "War" },
         { "id": 37, "name": "Western" }
       ];
+
+      // const lastedItem = genreName.slice(-1)[0];
     
       for (var i = 0; i < genres.length; i++) {
         if (genres[i].name.toString().toLowerCase() === genreName.toString().toLowerCase()) {

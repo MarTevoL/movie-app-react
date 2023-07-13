@@ -15,12 +15,15 @@ function HomePage() {
 
   const [movies, setMovies] = useState([]);
   const [pageNumP, setPageNumP] = useState(1);
+  const [pageNumQ, setPageNumQ] = useState(1);
   const [pageNumGenMovie, setPageNumGenMovie] = useState(1);
-  const [genreNum, setGenreNum] = useState([1])
+  const [genreNum, setGenreNum] = useState()
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [totalPage, setTotalPage] = useState(500)
   const defaultValues = {
     genres: [],
+    searchQuery :" ",
   };
   const methods = useForm({
     defaultValues,
@@ -28,11 +31,49 @@ function HomePage() {
   const pageCount = 500; // "page must be less than or equal to 500"
   const { watch, } = methods;
   const genreFilter = watch("genres");
+  const searchQuery = watch("searchQuery");
+  
   const isDisplayGenreMovie = !!genreFilter.length;
+  const isDisplayQueryMovie = !(searchQuery.trim().length === 0);
 
   useEffect(() => {
     console.log("ispopular",isDisplayGenreMovie);
-    if (isDisplayGenreMovie) {
+    if (!isDisplayQueryMovie) {
+      return
+    }
+    const getMovies = async () => {
+      setLoading(true);
+      try {
+        const res = await apiService.get("/search/movie",{
+          params : {
+            query: searchQuery,
+            page: pageNumQ
+            
+          }
+        });
+        setMovies(res.data.results);
+        setTotalPage(res.data.total_pages);
+        
+        
+        console.log("total page",res.data.total_pages);
+        console.log("total page",totalPage);
+        console.log("isQuery",isDisplayQueryMovie);
+        setError("");
+      } catch (error) {
+        setError(error.message);
+      }
+      setLoading(false);
+    };
+    getMovies();
+  }, [searchQuery,pageNumQ]);
+
+  useEffect(()=>{
+    setPageNumQ(1);
+  },[searchQuery]);
+
+  useEffect(() => {
+    console.log("ispopular",isDisplayGenreMovie);
+    if (isDisplayGenreMovie || isDisplayQueryMovie) {
       return
     }
     const getMovies = async () => {
@@ -47,7 +88,6 @@ function HomePage() {
         setMovies(res.data.results);
         setError("");
       } catch (error) {
-        console.log(error);
         setError(error.message);
       }
       setLoading(false);
@@ -56,7 +96,7 @@ function HomePage() {
   }, [pageNumP]);
 
   useEffect(() => {
-    if (!isDisplayGenreMovie) {
+    if (!isDisplayGenreMovie || isDisplayQueryMovie) {
      return 
     }
     const getMoviesWithGenre = async () => {
@@ -72,7 +112,6 @@ function HomePage() {
         setMovies(res.data.results);
         setError("");
       } catch (error) {
-        console.log(error);
         setError(error.message);
       }
       setLoading(false);
@@ -82,23 +121,28 @@ function HomePage() {
 
   useEffect(() => {
     setGenreNum(genreNumber(genreFilter));
-    if (isDisplayGenreMovie) {
+    if (isDisplayGenreMovie ) {
       setPageNumGenMovie(1);
     } else {
+      
       setPageNumP(1);
     }
-    console.log("genreNum",genreNum);
-    console.log("genre",genreFilter);
-    console.log("isDisplayMovie",isDisplayGenreMovie);
-  },[genreFilter])
-  
+  },[genreFilter,genreNum])
+
+ 
 
  const PaginationBox = () => {
     return (
       <Box sx={{display:"flex",justifyContent:"center"}}>
-      <Pagination page={isDisplayGenreMovie ?  pageNumGenMovie : pageNumP} onChange={(e,page) => {
-        isDisplayGenreMovie ? setPageNumGenMovie(page) : setPageNumP(page);
-        }} count={pageCount} shape="rounded" color="primary" variant="outlined"/>
+      <Pagination page={isDisplayQueryMovie ? pageNumQ : isDisplayGenreMovie ? pageNumGenMovie : pageNumP
+        
+      
+      } onChange={(e,page) => {
+        if (isDisplayQueryMovie) {
+          setPageNumQ(page);
+        } else {
+        isDisplayGenreMovie ? setPageNumGenMovie(page) : setPageNumP(page)};
+        }} count={ isDisplayQueryMovie ? totalPage : 500} shape="rounded" color="primary" variant="outlined"/>
 </Box>
     );
   }
