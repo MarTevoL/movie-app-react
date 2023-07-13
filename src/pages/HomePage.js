@@ -1,11 +1,10 @@
 import React, { useState, useEffect,  } from "react";
 import { Alert, Box, Container, Stack } from "@mui/material";
 import MovieFilter from "../components/MovieFilter";
-import AllMovieFilter from "../components/AllMovieFilter";
 import MovieSearch from "../components/MovieSearch";
 import MovieList from "../components/MovieList";
 import { FormProvider } from "../components/form";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import apiService from "../app/apiService";
 import Pagination from '@mui/material/Pagination';
 import LoadingScreen from "../components/LoadingScreen";
@@ -37,7 +36,6 @@ function HomePage() {
   const isDisplayQueryMovie = !(searchQuery.trim().length === 0);
 
   useEffect(() => {
-    console.log("ispopular",isDisplayGenreMovie);
     if (!isDisplayQueryMovie) {
       return
     }
@@ -55,9 +53,6 @@ function HomePage() {
         setTotalPage(res.data.total_pages);
         
         
-        console.log("total page",res.data.total_pages);
-        console.log("total page",totalPage);
-        console.log("isQuery",isDisplayQueryMovie);
         setError("");
       } catch (error) {
         setError(error.message);
@@ -65,14 +60,13 @@ function HomePage() {
       setLoading(false);
     };
     getMovies();
-  }, [searchQuery,pageNumQ]);
+  }, [searchQuery,pageNumQ,isDisplayQueryMovie]);
 
   useEffect(()=>{
     setPageNumQ(1);
   },[searchQuery]);
 
   useEffect(() => {
-    console.log("ispopular",isDisplayGenreMovie);
     if (isDisplayGenreMovie || isDisplayQueryMovie) {
       return
     }
@@ -93,7 +87,7 @@ function HomePage() {
       setLoading(false);
     };
     getMovies();
-  }, [pageNumP]);
+  }, [pageNumP,isDisplayGenreMovie,isDisplayQueryMovie]);
 
   useEffect(() => {
     if (!isDisplayGenreMovie || isDisplayQueryMovie) {
@@ -117,7 +111,7 @@ function HomePage() {
       setLoading(false);
     };
     getMoviesWithGenre();
-  }, [genreNum,pageNumGenMovie]);
+  }, [genreNum,pageNumGenMovie,isDisplayGenreMovie,isDisplayQueryMovie]);
 
   useEffect(() => {
     setGenreNum(genreNumber(genreFilter));
@@ -127,7 +121,7 @@ function HomePage() {
       
       setPageNumP(1);
     }
-  },[genreFilter,genreNum]);
+  },[genreFilter,genreNum,isDisplayGenreMovie]);
 
 
   
