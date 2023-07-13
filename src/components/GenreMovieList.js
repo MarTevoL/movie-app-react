@@ -1,6 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, {  useState, useEffect } from 'react';
 import { Grid,Box, Alert } from "@mui/material";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import MovieCard from "./MovieCard";
 import apiService from '../app/apiService';
 import LoadingScreen from "../components/LoadingScreen";
@@ -40,7 +40,6 @@ function GenreMovieList() {
       setLoading(false);
     };
     getMoviesWithGenre();
-    console.log(filter);
   }, [genreNum,pageNum]);
 
   useEffect(() => {

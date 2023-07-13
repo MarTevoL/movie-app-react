@@ -75,7 +75,6 @@ function DetailPage() {
         try {
           const res = await apiService.get(`/movie/${params.id}/images`);
           setImages(res.data.backdrops);
-          console.log("images", images);
           setError("");
         } catch (error) {
           console.log(error);

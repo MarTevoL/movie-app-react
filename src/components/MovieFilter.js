@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
-import { FMultiCheckbox, FRadioGroup } from "./form";
-import ClearAllIcon from "@mui/icons-material/ClearAll";
+import {  Stack, Typography } from "@mui/material";
+import { FRadioGroup } from "./form";
 import apiService from "../app/apiService";
 import LoadingScreen from "./LoadingScreen";
-import { useForm } from "react-hook-form";
-import { CloseFullscreen } from "@mui/icons-material";
 
 
 
