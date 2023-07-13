@@ -16,12 +16,10 @@ function HomePage() {
 
   const [movies, setMovies] = useState([]);
   const [pageNumP, setPageNumP] = useState(1);
-  const [pageNumQ, setPageNumQ] = useState(1);
   const [pageNumGenMovie, setPageNumGenMovie] = useState(1);
   const [genreNum, setGenreNum] = useState()
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [totalPage, setTotalPage] = useState(500)
   const defaultValues = {
     genres: [],
     searchQuery :" ",
@@ -34,14 +32,10 @@ function HomePage() {
   const searchQuery = watch("searchQuery");
   
   const isDisplayGenreMovie = !!genreFilter.length;
-  const isDisplayQueryMovie = !(searchQuery.trim().length === 0);
   const navigate = useNavigate();
 
   
 
-  useEffect(()=>{
-    setPageNumQ(1);
-  },[searchQuery]);
 
   useEffect(() => {
     if (isDisplayGenreMovie ) {
@@ -112,7 +106,7 @@ function HomePage() {
  const PaginationBox = () => {
     return (
       <Box sx={{display:"flex",justifyContent:"center"}}>
-      <Pagination page={isDisplayGenreMovie ? pageNumGenMovie : pageNumP} onChange={(e,page) =>{isDisplayGenreMovie ? setPageNumGenMovie(page) : setPageNumP(page)}} count={ isDisplayQueryMovie ? totalPage : 500} shape="rounded" color="primary" variant="outlined"/>
+      <Pagination page={isDisplayGenreMovie ? pageNumGenMovie : pageNumP} onChange={(e,page) =>{isDisplayGenreMovie ? setPageNumGenMovie(page) : setPageNumP(page)}} count={500} shape="rounded" color="primary" variant="outlined"/>
 </Box>
     );
   }
